@@ -1,6 +1,6 @@
-from fastapi import FastAPI, HTTPException, Form
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from newsapi import NewsApiClient
+# from newsapi import NewsApiClient
 import os
 import requests as rq
 
@@ -18,7 +18,10 @@ app.add_middleware(
 api_key = os.getenv("NEWS_API")
 
 @app.post("/fetch")
-def fetch(category: str):
+async def fetch(req: Request):
+    category = await req.body()
+    category = category.decode("utf-8")
+    
     url="https://newsapi.org/v2/everything?q="+category+"&apiKey="+api_key
     
     if category=="headlines":
